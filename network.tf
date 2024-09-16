@@ -27,14 +27,14 @@ resource "aws_subnet" "public" {
   }
 }
 #private subnet
-resource "aws_subnet" "private" {
-  vpc_id     = aws_vpc.main.id
-  cidr_block = "10.100.20.0/24"
+# resource "aws_subnet" "private" {
+#   vpc_id     = aws_vpc.main.id
+#   cidr_block = "10.100.20.0/24"
 
-  tags = {
-    Name = "private"
-  }
-}
+#   tags = {
+#     Name = "private"
+#   }
+# }
 
 #public route table
 resource "aws_route_table" "public" {
@@ -51,18 +51,18 @@ resource "aws_route_table" "public" {
 }
 
 #private route table
-resource "aws_route_table" "private" {
-  vpc_id = aws_vpc.main.id
+# resource "aws_route_table" "private" {
+#   vpc_id = aws_vpc.main.id
 
-  route {
-    cidr_block = "0.0.0.0/0"
-    gateway_id = aws_nat_gateway.main.id
-  }
+#   route {
+#     cidr_block = "0.0.0.0/0"
+#     gateway_id = aws_nat_gateway.main.id
+#   }
 
-  tags = {
-    Name = "default_gateway"
-  }
-}
+#   tags = {
+#     Name = "default_gateway"
+#   }
+# }
 
 #public route table associate
 resource "aws_route_table_association" "public" {
@@ -70,10 +70,10 @@ resource "aws_route_table_association" "public" {
   route_table_id = aws_route_table.public.id
 }
 #private route table associate
-resource "aws_route_table_association" "private" {
-  subnet_id      = aws_subnet.private.id
-  route_table_id = aws_route_table.private.id
-}
+# resource "aws_route_table_association" "private" {
+#   subnet_id      = aws_subnet.private.id
+#   route_table_id = aws_route_table.private.id
+# }
 
 #public security group
 resource "aws_security_group" "public" {
@@ -95,35 +95,35 @@ resource "aws_security_group" "public" {
 }
 
 #private security group
-resource "aws_security_group" "private" {
-  vpc_id = aws_vpc.main.id
+# resource "aws_security_group" "private" {
+#   vpc_id = aws_vpc.main.id
 
-  ingress {
-    from_port   = 22
-    to_port     = 22
-    protocol    = "tcp"
-    cidr_blocks = ["10.100.10.0/24"]
-  }
-  ingress {
-    from_port   = 80
-    to_port     = 80
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-  ingress {
-    from_port   = 443
-    to_port     = 443
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
+#   ingress {
+#     from_port   = 22
+#     to_port     = 22
+#     protocol    = "tcp"
+#     cidr_blocks = ["10.100.10.0/24"]
+#   }
+#   ingress {
+#     from_port   = 80
+#     to_port     = 80
+#     protocol    = "tcp"
+#     cidr_blocks = ["0.0.0.0/0"]
+#   }
+#   ingress {
+#     from_port   = 443
+#     to_port     = 443
+#     protocol    = "tcp"
+#     cidr_blocks = ["0.0.0.0/0"]
+#   }
 
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-}
+#   egress {
+#     from_port   = 0
+#     to_port     = 0
+#     protocol    = "-1"
+#     cidr_blocks = ["0.0.0.0/0"]
+#   }
+# }
 
 #key pair
 resource "aws_key_pair" "main" {
@@ -132,20 +132,20 @@ resource "aws_key_pair" "main" {
 }
 
 #nat_gateway eip
-resource "aws_eip" "nat_gateway" {
-  domain     = "vpc"
-  #インターネットゲートウェイ構築後に作ることを明示的に示す
-  depends_on = [aws_internet_gateway.main]
-}
+# resource "aws_eip" "nat_gateway" {
+#   domain     = "vpc"
+#   #インターネットゲートウェイ構築後に作ることを明示的に示す
+#   depends_on = [aws_internet_gateway.main]
+# }
 
-#nat gateway
-resource "aws_nat_gateway" "main" {
-  allocation_id = aws_eip.nat_gateway.id
-  subnet_id     = aws_subnet.public.id
-  #インターネットゲートウェイ構築後に作ることを明示的に示す
-  depends_on    = [aws_internet_gateway.main]
+# #nat gateway
+# resource "aws_nat_gateway" "main" {
+#   allocation_id = aws_eip.nat_gateway.id
+#   subnet_id     = aws_subnet.public.id
+#   #インターネットゲートウェイ構築後に作ることを明示的に示す
+#   depends_on    = [aws_internet_gateway.main]
 
-  tags = {
-    Name = "main"
-  }
-}
+#   tags = {
+#     Name = "main"
+#   }
+# }

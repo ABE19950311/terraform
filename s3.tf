@@ -6,10 +6,10 @@
 #   }
 # }
 
-resource "aws_s3_bucket" "web" {
-    bucket = "web20240916"
+# resource "aws_s3_bucket" "web" {
+#     bucket = "web20240916"
 
-    tags = {
-        Name = "webtest"
-    }
-}
+#     tags = {
+#         Name = "webtest"
+#     }
+# }

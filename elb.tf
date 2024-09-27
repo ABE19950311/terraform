@@ -5,6 +5,7 @@ resource "aws_lb" "main" {
   security_groups    = [aws_security_group.alb.id]
   #lb自身は冗長化したパブリックサブネットに配置する
   #ターゲット先インスタンスのサブネットを指定するわけではない
+  #https://docs.aws.amazon.com/ja_jp/prescriptive-guidance/latest/load-balancer-stickiness/subnets-routing.html
   #https://qiita.com/hatahatahata/items/9bb67aabe2282b38b029
   subnets            = [aws_subnet.alb1.id, aws_subnet.alb2.id]
 

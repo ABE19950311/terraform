@@ -26,6 +26,18 @@ resource "aws_subnet" "bastion" {
     Name = "bastion"
   }
 }
+#tmp public subnet
+resource "aws_subnet" "tmp_pub" {
+  vpc_id                  = aws_vpc.main.id
+  cidr_block              = "10.100.80.0/24"
+  map_public_ip_on_launch = true
+
+  tags = {
+    Name = "tmp_pub"
+  }
+}
+
+
 #alb subnet
 # resource "aws_subnet" "alb1" {
 #   vpc_id     = aws_vpc.main.id
@@ -66,25 +78,25 @@ resource "aws_subnet" "bastion" {
 # }
 
 # rds subnet
-resource "aws_subnet" "rds1" {
-  vpc_id     = aws_vpc.main.id
-  cidr_block = "10.100.60.0/24"
-  availability_zone = "ap-northeast-1a"
+# resource "aws_subnet" "rds1" {
+#   vpc_id     = aws_vpc.main.id
+#   cidr_block = "10.100.60.0/24"
+#   availability_zone = "ap-northeast-1a"
 
-  tags = {
-    Name = "rds1"
-  }
-}
+#   tags = {
+#     Name = "rds1"
+#   }
+# }
 
-resource "aws_subnet" "rds2" {
-  vpc_id     = aws_vpc.main.id
-  cidr_block = "10.100.70.0/24"
-  availability_zone = "ap-northeast-1c"
+# resource "aws_subnet" "rds2" {
+#   vpc_id     = aws_vpc.main.id
+#   cidr_block = "10.100.70.0/24"
+#   availability_zone = "ap-northeast-1c"
 
-  tags = {
-    Name = "rds2"
-  }
-}
+#   tags = {
+#     Name = "rds2"
+#   }
+# }
 
 #public route table
 resource "aws_route_table" "bastion" {
@@ -99,18 +111,18 @@ resource "aws_route_table" "bastion" {
     Name = "default_gateway"
   }
 }
-resource "aws_route_table" "alb" {
-  vpc_id = aws_vpc.main.id
+# resource "aws_route_table" "alb" {
+#   vpc_id = aws_vpc.main.id
 
-  route {
-    cidr_block = "0.0.0.0/0"
-    gateway_id = aws_internet_gateway.main.id
-  }
+#   route {
+#     cidr_block = "0.0.0.0/0"
+#     gateway_id = aws_internet_gateway.main.id
+#   }
 
-  tags = {
-    Name = "default_gateway"
-  }
-}
+#   tags = {
+#     Name = "default_gateway"
+#   }
+# }
 
 #private route table
 # resource "aws_route_table" "private" {
@@ -129,6 +141,10 @@ resource "aws_route_table" "alb" {
 #public route table associate
 resource "aws_route_table_association" "public" {
   subnet_id      = aws_subnet.bastion.id
+  route_table_id = aws_route_table.bastion.id
+}
+resource "aws_route_table_association" "tmp_pub" {
+  subnet_id      = aws_subnet.tmp_pub.id
   route_table_id = aws_route_table.bastion.id
 }
 # resource "aws_route_table_association" "alb1" {
@@ -218,14 +234,32 @@ resource "aws_security_group" "bastion" {
 # }
 
 # rds security group 
-resource "aws_security_group" "rds" {
+# resource "aws_security_group" "rds" {
+#   vpc_id = aws_vpc.main.id
+
+#   ingress {
+#     from_port   = 3306
+#     to_port     = 3306
+#     protocol    = "tcp"
+#     cidr_blocks = ["10.100.10.0/24"]
+#   }
+#   egress {
+#     from_port   = 0
+#     to_port     = 0
+#     protocol    = "-1"
+#     cidr_blocks = ["0.0.0.0/0"]
+#   }
+# }
+
+# nfs 
+resource "aws_security_group" "nfs" {
   vpc_id = aws_vpc.main.id
 
   ingress {
-    from_port   = 3306
-    to_port     = 3306
+    from_port   = 2049
+    to_port     = 2049
     protocol    = "tcp"
-    cidr_blocks = ["10.100.10.0/24"]
+    cidr_blocks = ["10.100.0.0/16"]
   }
   egress {
     from_port   = 0

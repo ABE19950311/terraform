@@ -48,3 +48,14 @@
 # #     Name = "private2"
 # #   }
 # # }
+
+resource "aws_instance" "rtx" {
+    ami = "ami-0571e4aad10fd3efd"
+    instance_type = "t3.medium"
+    subnet_id = aws_subnet.rtx.id
+    vpc_security_group_ids = [aws_security_group.bastion.id]
+
+    tags = {
+        Name = "rtx"
+    }
+}

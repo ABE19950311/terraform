@@ -1,20 +1,20 @@
 # #vpc
-# resource "aws_vpc" "main" {
-#   cidr_block = "10.100.0.0/16"
+resource "aws_vpc" "main" {
+  cidr_block = "10.100.0.0/16"
 
-#   tags = {
-#     Name = "main"
-#   }
-# }
+  tags = {
+    Name = "main"
+  }
+}
 
 # #internete gateway
-# resource "aws_internet_gateway" "main" {
-#   vpc_id = aws_vpc.main.id
+resource "aws_internet_gateway" "main" {
+  vpc_id = aws_vpc.main.id
 
-#   tags = {
-#     Name = "main"
-#   }
-# }
+  tags = {
+    Name = "main"
+  }
+}
 
 # #public subnet
 # resource "aws_subnet" "bastion" {
@@ -98,19 +98,28 @@
 # #   }
 # # }
 
+resource "aws_subnet" "rtx" {
+    vpc_id = aws_vpc.main.id
+    cidr_block = "10.100.80.0/24"
+
+    tags = {
+        Name = "rtx"
+    }
+}
+
 # #public route table
-# resource "aws_route_table" "bastion" {
-#   vpc_id = aws_vpc.main.id
+resource "aws_route_table" "bastion" {
+  vpc_id = aws_vpc.main.id
 
-#   route {
-#     cidr_block = "0.0.0.0/0"
-#     gateway_id = aws_internet_gateway.main.id
-#   }
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_internet_gateway.main.id
+  }
 
-#   tags = {
-#     Name = "default_gateway"
-#   }
-# }
+  tags = {
+    Name = "default_gateway"
+  }
+}
 # # resource "aws_route_table" "alb" {
 # #   vpc_id = aws_vpc.main.id
 
@@ -164,25 +173,29 @@
 # #   subnet_id      = aws_subnet.private2.id
 # #   route_table_id = aws_route_table.private.id
 # # }
+resource "aws_route_table_association" "rtx" {
+  subnet_id      = aws_subnet.rtx.id
+  route_table_id = aws_route_table.bastion.id
+}
 
 # #public security group
-# resource "aws_security_group" "bastion" {
-#   vpc_id = aws_vpc.main.id
+resource "aws_security_group" "bastion" {
+  vpc_id = aws_vpc.main.id
 
-#   ingress {
-#     from_port   = 0
-#     to_port     = 0
-#     protocol    = "-1"
-#     cidr_blocks = ["0.0.0.0/0"]
-#   }
+  ingress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
 
-#   egress {
-#     from_port   = 0
-#     to_port     = 0
-#     protocol    = "-1"
-#     cidr_blocks = ["0.0.0.0/0"]
-#   }
-# }
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
 
 # #private security group
 # # resource "aws_security_group" "private" {

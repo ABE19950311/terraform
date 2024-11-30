@@ -15,7 +15,7 @@
 #         allowed_methods = [ "GET", "HEAD" ]
 #         cached_methods = [ "GET", "HEAD" ]
 #         target_origin_id = aws_s3_bucket.bucket.id
-        
+
 #         forwarded_values {
 #             query_string = false
 
